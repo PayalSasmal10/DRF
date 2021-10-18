@@ -12,14 +12,14 @@ from rest_framework import status
 @api_view(["GET","POST"])
 def passengerDetails(request):
 
-    if request == "GET":
+    if request.method == "GET":
         passengers = PassengerModel.objects.all()
         serializer = PassengerSeralizer(passengers, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
-    elif request == "POST":
+    elif request.method == "POST":
         serializer = PassengerSeralizer(data=request.data)
-        if serializer.is_valid:
+        if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.data, status=status.HTTP_204_NO_CONTENT)
@@ -29,12 +29,12 @@ def passengerDetails(request):
 @api_view(["GET","PUT","DELETE"])
 def singlePassengerDetails(request,pk):
     
-    if request == "GET":
+    if request.method == "GET":
         passenger = PassengerModel.objects.get(id=pk)
-        serializer = PassengerSeralizer(data=passenger)
+        serializer = PassengerSeralizer(instance=passenger)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-    elif request == "PUT":
+    elif request.method == "PUT":
         passenger = PassengerModel.objects.get(id=pk)
         serializer = PassengerSeralizer(instance=passenger, data=request.data)
         if serializer.is_valid():
@@ -42,7 +42,7 @@ def singlePassengerDetails(request,pk):
             return Response(serializer.data,status=status.HTTP_202_ACCEPTED)
         return Response(serializer.data, status=status.HTTP_400_BAD_REQUEST)
 
-    elif request == "DELETE":
+    elif request.method == "DELETE":
         passenger = PassengerModel.objects.get(id=pk)
         passenger.delete()
         return Response("Successfully Deleted")
